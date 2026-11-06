@@ -1,0 +1,18 @@
+{
+  // Reglas de markdownlint. Cada excepción está justificada.
+  "config": {
+    "default": true,
+    // Las tablas y los párrafos largos no se cortan a 80 columnas: cortar una
+    // fila de tabla la rompe, y los saltos de línea no cambian el render.
+    "MD013": false,
+    // Tablas de metadatos con encabezado vacío (| | |) al inicio de cada documento.
+    "MD055": false,
+    "MD056": false,
+    // El link al otro idioma va en negrita debajo del título, no es un encabezado.
+    "MD036": false,
+    // Separadores de tabla compactos (|---|---|), el mismo estilo que el resto
+    // de los repos: el render en GitHub es idéntico.
+    "MD060": false
+  },
+  "ignores": ["node_modules/**"]
+}

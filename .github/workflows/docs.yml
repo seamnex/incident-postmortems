@@ -1,0 +1,45 @@
+# Valida la documentación en cada push y PR a main.
+#
+# Un repo de postmortems y runbooks se rompe de formas silenciosas: un
+# runbook que cambia de nombre y una alerta —o un postmortem— que sigue
+# apuntando al viejo; una traducción que falta. Nada de eso da error al
+# leerlo en GitHub, y se descubre en medio de un incidente, cuando alguien
+# hace clic en el runbook_url y llega a un 404.
+
+name: docs
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+
+permissions:
+  contents: read
+
+jobs:
+  docs:
+    name: Formato, links y paridad ES/EN
+    runs-on: ubuntu-24.04
+    timeout-minutes: 5
+    steps:
+      - name: Checkout
+        uses: actions/checkout@3d3c42e5aac5ba805825da76410c181273ba90b1 # v7.0.1
+
+      - name: markdownlint
+        uses: DavidAnson/markdownlint-cli2-action@21c1be1b93ad9ed58fa840aacc3f279cde2a72ff # v24.2.0
+        with:
+          globs: '**/*.md'
+
+      - name: Links internos
+        # --offline: solo links entre archivos del repo y anchors (#aviso).
+        # Los links externos se dejan afuera a propósito: un sitio caído un
+        # rato no debería poner en rojo un repo de documentación.
+        uses: lycheeverse/lychee-action@e7477775783ea5526144ba13e8db5eec57747ce8 # v2.9.0
+        with:
+          lycheeVersion: v0.24.2
+          args: --offline --no-progress --include-fragments './**/*.md'
+          fail: true
+
+      - name: Paridad ES/EN
+        run: bash scripts/paridad.sh
